@@ -8,6 +8,7 @@ for (let i = 0; i < rows.length; i++) {
       unavailable: (i * 12 + number) % 13 === 0 });
   }
 }
+let selectedSeat = null;
 const seatArea = document.getElementById('seats');
 function showSeats() {
   seatArea.innerHTML = '';
@@ -20,13 +21,23 @@ function showSeats() {
     rowDiv.appendChild(label);
     for (const seat of seats.filter(s => s.row === row)) {
       const button = document.createElement('button');
-      button.className = 'seat available';
+      button.className = 'seat ' + (selectedSeat === seat.id ? 'selected' : 'available');
       button.textContent = seat.number;
       button.title = seat.id + ' - ' + seat.price + ' AZN';
       if (seat.number === 7) button.classList.add('aisle');
+      button.onclick = () => inspectSeat(seat.id);
       rowDiv.appendChild(button);
     }
     seatArea.appendChild(rowDiv);
   }
+}
+const details = document.getElementById('details');
+const addBtn = document.getElementById('addBtn');
+function inspectSeat(id) {
+  const seat = seats.find(s => s.id === id);
+  selectedSeat = id;
+  details.textContent = 'Seat: ' + seat.id + ' | ' + seat.category + ' | ' + seat.price + ' AZN';
+  addBtn.disabled = false;
+  showSeats();
 }
 showSeats();
