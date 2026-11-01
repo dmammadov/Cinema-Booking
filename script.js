@@ -1,15 +1,30 @@
 const rows = 'ABCDEFGHIJ';
 const seats = [];
+let selectedSeat = null;
+let cart = [];
+let scale = 1;
+let moveX = 0;
+let moveY = 0;
+
 for (let i = 0; i < rows.length; i++) {
   for (let number = 1; number <= 12; number++) {
     let category = i < 2 ? 'VIP' : i < 5 ? 'Premium' : 'Standard';
     let price = category === 'VIP' ? 25 : category === 'Premium' ? 15 : 10;
-    seats.push({ id: rows[i] + number, row: rows[i], number, category, price,
-      unavailable: (i * 12 + number) % 13 === 0 });
+    seats.push({ id: rows[i] + number, row: rows[i], number, category, price, unavailable: (i * 12 + number) % 13 === 0 });
   }
 }
-let selectedSeat = null;
+
 const seatArea = document.getElementById('seats');
+const details = document.getElementById('details');
+const addBtn = document.getElementById('addBtn');
+const cartItems = document.getElementById('cartItems');
+const total = document.getElementById('total');
+const venue = document.getElementById('venue');
+
+cart = cart.filter((id, index) => seats.some(s => s.id === id && !s.unavailable) && cart.indexOf(id) === index);
+
+function saveCart() {}
+
 function showSeats() {
   seatArea.innerHTML = '';
   for (const row of rows) {
@@ -21,34 +36,65 @@ function showSeats() {
     rowDiv.appendChild(label);
     for (const seat of seats.filter(s => s.row === row)) {
       const button = document.createElement('button');
-      button.className = 'seat ' + (seat.unavailable ? 'unavailable' : selectedSeat === seat.id ? 'selected' : 'available');
-      button.disabled = seat.unavailable;
       button.textContent = seat.number;
       button.title = seat.id + ' - ' + seat.price + ' AZN';
+      button.className = 'seat ' + (seat.unavailable ? 'unavailable' : cart.includes(seat.id) ? 'cart-seat' : selectedSeat === seat.id ? 'selected' : 'available');
       if (seat.number === 7) button.classList.add('aisle');
+      button.disabled = seat.unavailable;
       button.onclick = () => inspectSeat(seat.id);
       rowDiv.appendChild(button);
     }
     seatArea.appendChild(rowDiv);
   }
 }
-const details = document.getElementById('details');
-const addBtn = document.getElementById('addBtn');
+
 function inspectSeat(id) {
   const seat = seats.find(s => s.id === id);
-  if (!seat || seat.unavailable) return;
   selectedSeat = id;
-  details.textContent = 'Seat: ' + seat.id + ' | ' + seat.category + ' | ' + seat.price + ' AZN';
-  addBtn.disabled = false;
+  details.innerHTML = '<strong>Seat: ' + seat.id + '</strong><br>Category: ' + seat.category + '<br>Price: ' + seat.price + ' AZN' + (cart.includes(id) ? '<br>Already in cart' : '');
+  addBtn.disabled = cart.includes(id) || seat.unavailable;
   showSeats();
 }
-let scale = 1;
-let moveX = 0;
-let moveY = 0;
-const venue = document.getElementById('venue');
-function updateView() {
-  venue.style.transform = 'translate(' + moveX + 'px, ' + moveY + 'px) scale(' + scale + ')';
+
+addBtn.onclick = function () {
+  if (!selectedSeat || cart.includes(selectedSeat)) return;
+  const seat = seats.find(s => s.id === selectedSeat);
+  if (!seat || seat.unavailable) return;
+  cart.push(selectedSeat);
+  saveCart();
+  inspectSeat(selectedSeat);
+  showCart();
+};
+
+function removeSeat(id) {
+  cart = cart.filter(item => item !== id);
+  saveCart();
+  if (selectedSeat === id) inspectSeat(id);
+  else showSeats();
+  showCart();
 }
+
+function showCart() {
+  cartItems.innerHTML = '';
+  let sum = 0;
+  if (cart.length === 0) cartItems.textContent = 'Your cart is empty.';
+  for (const id of cart) {
+    const seat = seats.find(s => s.id === id);
+    sum += seat.price;
+    const item = document.createElement('div');
+    item.className = 'cart-item';
+    const name = document.createElement('span');
+    name.textContent = seat.id + ' - ' + seat.price + ' AZN';
+    const remove = document.createElement('button');
+    remove.textContent = 'Remove';
+    remove.onclick = () => removeSeat(id);
+    item.append(name, remove);
+    cartItems.appendChild(item);
+  }
+  total.textContent = sum + ' AZN';
+}
+
+function updateView() { venue.style.transform = 'translate(' + moveX + 'px, ' + moveY + 'px) scale(' + scale + ')'; }
 document.getElementById('zoomIn').onclick = () => { scale = Math.min(1.8, scale + 0.1); updateView(); };
 document.getElementById('zoomOut').onclick = () => { scale = Math.max(0.6, scale - 0.1); updateView(); };
 document.getElementById('up').onclick = () => { moveY -= 30; updateView(); };
@@ -56,4 +102,6 @@ document.getElementById('down').onclick = () => { moveY += 30; updateView(); };
 document.getElementById('left').onclick = () => { moveX -= 30; updateView(); };
 document.getElementById('right').onclick = () => { moveX += 30; updateView(); };
 document.getElementById('reset').onclick = () => { scale = 1; moveX = 0; moveY = 0; updateView(); };
+
 showSeats();
+showCart();
