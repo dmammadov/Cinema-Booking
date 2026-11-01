@@ -21,7 +21,8 @@ function showSeats() {
     rowDiv.appendChild(label);
     for (const seat of seats.filter(s => s.row === row)) {
       const button = document.createElement('button');
-      button.className = 'seat ' + (selectedSeat === seat.id ? 'selected' : 'available');
+      button.className = 'seat ' + (seat.unavailable ? 'unavailable' : selectedSeat === seat.id ? 'selected' : 'available');
+      button.disabled = seat.unavailable;
       button.textContent = seat.number;
       button.title = seat.id + ' - ' + seat.price + ' AZN';
       if (seat.number === 7) button.classList.add('aisle');
@@ -35,6 +36,7 @@ const details = document.getElementById('details');
 const addBtn = document.getElementById('addBtn');
 function inspectSeat(id) {
   const seat = seats.find(s => s.id === id);
+  if (!seat || seat.unavailable) return;
   selectedSeat = id;
   details.textContent = 'Seat: ' + seat.id + ' | ' + seat.category + ' | ' + seat.price + ' AZN';
   addBtn.disabled = false;
