@@ -1,7 +1,7 @@
 const rows = 'ABCDEFGHIJ';
 const seats = [];
 let selectedSeat = null;
-let cart = [];
+let cart = JSON.parse(localStorage.getItem('cinemaCart') || '[]');
 let scale = 1;
 let moveX = 0;
 let moveY = 0;
@@ -23,7 +23,7 @@ const venue = document.getElementById('venue');
 
 cart = cart.filter((id, index) => seats.some(s => s.id === id && !s.unavailable) && cart.indexOf(id) === index);
 
-function saveCart() {}
+function saveCart() { localStorage.setItem('cinemaCart', JSON.stringify(cart)); }
 
 function showSeats() {
   seatArea.innerHTML = '';
@@ -103,5 +103,6 @@ document.getElementById('left').onclick = () => { moveX -= 30; updateView(); };
 document.getElementById('right').onclick = () => { moveX += 30; updateView(); };
 document.getElementById('reset').onclick = () => { scale = 1; moveX = 0; moveY = 0; updateView(); };
 
+saveCart();
 showSeats();
 showCart();
