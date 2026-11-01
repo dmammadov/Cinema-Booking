@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinema Ticket Booking</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header><h1>Cinema Ticket Booking</h1><p>Choose your seat and enjoy the movie!</p></header>
+  <main>
+    <section class="hall">
+      <div class="heading"><h2>Cinema Hall</h2><p>Click a seat to see its details</p></div>
+      <div class="legend"><span><i class="dot available"></i> Available</span><span><i class="dot selected"></i> Selected</span><span><i class="dot cart-seat"></i> In cart</span><span><i class="dot unavailable"></i> Unavailable</span></div>
+      
+      <div class="viewport"><div id="venue"><div class="screen">SCREEN</div><div id="seats"></div></div></div>
+    </section>
+    <aside>
+      <section class="panel"><h2>Seat Details</h2><div id="details">Select an available seat to see the price.</div><button id="addBtn" disabled>ADD TO CART</button></section>
+      <section class="panel"><h2>Your Cart</h2><div id="cartItems">Your cart is empty.</div><div class="total">Total: <strong id="total">0 AZN</strong></div></section>
+      <section class="panel prices"><h2>Ticket Prices</h2><p>VIP (Rows A–B): 25 AZN</p><p>Premium (Rows C–E): 15 AZN</p><p>Standard (Rows F–J): 10 AZN</p></section>
+    </aside>
+  </main>
+  <footer>Web & Mobile I | Student Project</footer>
+
+</body>
+</html>
