@@ -42,4 +42,18 @@ function inspectSeat(id) {
   addBtn.disabled = false;
   showSeats();
 }
+let scale = 1;
+let moveX = 0;
+let moveY = 0;
+const venue = document.getElementById('venue');
+function updateView() {
+  venue.style.transform = 'translate(' + moveX + 'px, ' + moveY + 'px) scale(' + scale + ')';
+}
+document.getElementById('zoomIn').onclick = () => { scale = Math.min(1.8, scale + 0.1); updateView(); };
+document.getElementById('zoomOut').onclick = () => { scale = Math.max(0.6, scale - 0.1); updateView(); };
+document.getElementById('up').onclick = () => { moveY -= 30; updateView(); };
+document.getElementById('down').onclick = () => { moveY += 30; updateView(); };
+document.getElementById('left').onclick = () => { moveX -= 30; updateView(); };
+document.getElementById('right').onclick = () => { moveX += 30; updateView(); };
+document.getElementById('reset').onclick = () => { scale = 1; moveX = 0; moveY = 0; updateView(); };
 showSeats();
