@@ -1,7 +1,13 @@
 const rows = 'ABCDEFGHIJ';
 const seats = [];
 let selectedSeat = null;
-let cart = JSON.parse(localStorage.getItem('cinemaCart') || '[]');
+let cart = [];
+try {
+  const savedCart = JSON.parse(localStorage.getItem('cinemaCart') || '[]');
+  cart = Array.isArray(savedCart) ? savedCart : [];
+} catch (error) {
+  cart = [];
+}
 let scale = 1;
 let moveX = 0;
 let moveY = 0;
@@ -21,7 +27,7 @@ const cartItems = document.getElementById('cartItems');
 const total = document.getElementById('total');
 const venue = document.getElementById('venue');
 
-cart = cart.filter((id, index) => seats.some(s => s.id === id && !s.unavailable) && cart.indexOf(id) === index);
+cart = cart.filter((id, index) => typeof id === 'string' && seats.some(s => s.id === id && !s.unavailable) && cart.indexOf(id) === index);
 
 function saveCart() { localStorage.setItem('cinemaCart', JSON.stringify(cart)); }
 
@@ -38,6 +44,7 @@ function showSeats() {
       const button = document.createElement('button');
       button.textContent = seat.number;
       button.title = seat.id + ' - ' + seat.price + ' AZN';
+      button.setAttribute('aria-label', 'Seat ' + seat.id + ', ' + seat.category + ', ' + seat.price + ' AZN');
       button.className = 'seat ' + (seat.unavailable ? 'unavailable' : cart.includes(seat.id) ? 'cart-seat' : selectedSeat === seat.id ? 'selected' : 'available');
       if (seat.number === 7) button.classList.add('aisle');
       button.disabled = seat.unavailable;
@@ -50,6 +57,7 @@ function showSeats() {
 
 function inspectSeat(id) {
   const seat = seats.find(s => s.id === id);
+  if (!seat || seat.unavailable) return;
   selectedSeat = id;
   details.innerHTML = '<strong>Seat: ' + seat.id + '</strong><br>Category: ' + seat.category + '<br>Price: ' + seat.price + ' AZN' + (cart.includes(id) ? '<br>Already in cart' : '');
   addBtn.disabled = cart.includes(id) || seat.unavailable;
@@ -94,7 +102,10 @@ function showCart() {
   total.textContent = sum + ' AZN';
 }
 
-function updateView() { venue.style.transform = 'translate(' + moveX + 'px, ' + moveY + 'px) scale(' + scale + ')'; }
+function updateView() {
+  moveX = Math.max(-450, Math.min(450, moveX));
+  moveY = Math.max(-450, Math.min(450, moveY));
+  venue.style.transform = 'translate(' + moveX + 'px, ' + moveY + 'px) scale(' + scale + ')'; }
 document.getElementById('zoomIn').onclick = () => { scale = Math.min(1.8, scale + 0.1); updateView(); };
 document.getElementById('zoomOut').onclick = () => { scale = Math.max(0.6, scale - 0.1); updateView(); };
 document.getElementById('up').onclick = () => { moveY -= 30; updateView(); };
