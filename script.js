@@ -117,3 +117,39 @@ document.getElementById('reset').onclick = () => { scale = 1; moveX = 0; moveY =
 saveCart();
 showSeats();
 showCart();
+
+
+// Optional mouse controls (bonus)
+const viewport = document.getElementById('viewport');
+let dragging = false;
+let dragX = 0;
+let dragY = 0;
+
+viewport.addEventListener('wheel', function (event) {
+  event.preventDefault();
+  scale = Math.max(0.6, Math.min(1.8, scale + (event.deltaY < 0 ? 0.1 : -0.1)));
+  updateView();
+}, { passive: false });
+
+viewport.addEventListener('pointerdown', function (event) {
+  if (event.button !== 0 || event.target.closest('button')) return;
+  dragging = true;
+  dragX = event.clientX;
+  dragY = event.clientY;
+  viewport.classList.add('dragging');
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', function (event) {
+  if (!dragging) return;
+  moveX += event.clientX - dragX;
+  moveY += event.clientY - dragY;
+  dragX = event.clientX;
+  dragY = event.clientY;
+  updateView();
+});
+function stopDragging() {
+  dragging = false;
+  viewport.classList.remove('dragging');
+}
+viewport.addEventListener('pointerup', stopDragging);
+viewport.addEventListener('pointercancel', stopDragging);

@@ -10,10 +10,11 @@
   <header><h1>Cinema Ticket Booking</h1><p>Choose your seat and enjoy the movie!</p></header>
   <main>
     <section class="hall">
-      <div class="heading"><h2>Cinema Hall</h2><p>Click a seat to see its details</p></div>
+      <div class="heading"><h2>Cinema Hall</h2><p>Click a seat to inspect it, then press ADD TO CART</p></div>
       <div class="legend"><span><i class="dot available"></i> Available</span><span><i class="dot selected"></i> Selected</span><span><i class="dot cart-seat"></i> In cart</span><span><i class="dot unavailable"></i> Unavailable</span></div>
       <div class="controls"><button id="zoomIn">Zoom +</button><button id="zoomOut">Zoom -</button><button id="up">↑</button><button id="down">↓</button><button id="left">←</button><button id="right">→</button><button id="reset">Reset View</button></div>
-      <div class="viewport"><div id="venue"><div class="screen">SCREEN</div><div id="seats"></div></div></div>
+      <p class="map-tip">Tip: Use the buttons or mouse wheel to zoom. Drag the empty map area to move.</p>
+      <div class="viewport" id="viewport"><div id="venue"><div class="screen">SCREEN</div><div id="seats"></div></div></div>
     </section>
     <aside>
       <section class="panel"><h2>Seat Details</h2><div id="details" aria-live="polite">Select an available seat to see the price.</div><button id="addBtn" disabled>ADD TO CART</button></section>
